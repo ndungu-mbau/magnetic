@@ -1,95 +1,101 @@
-import type { Metadata } from 'next'
-
-import { Button } from '@/components/ui/button'
-import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import Link from 'next/link'
-import { headers as getHeaders } from 'next/headers.js'
 import configPromise from '@payload-config'
-import { AccountForm } from '@/components/forms/AccountForm'
-import { Order } from '@/payload-types'
-import { OrderItem } from '@/components/OrderItem'
 import { getPayload } from 'payload'
+import { headers as getHeaders } from 'next/headers'
 import { redirect } from 'next/navigation'
+import Link from 'next/link'
+import type { Order } from '@/payload-types'
+import { Metadata } from 'next'
+import { LogoutButton } from '@/components/shop/LogoutButton'
+
+export const metadata: Metadata = {
+  title: 'Your account — Magnetic Cosmetics',
+}
 
 export default async function AccountPage() {
   const headers = await getHeaders()
   const payload = await getPayload({ config: configPromise })
   const { user } = await payload.auth({ headers })
 
-  let orders: Order[] | null = null
-
   if (!user) {
-    redirect(
-      `/login?warning=${encodeURIComponent('Please login to access your account settings.')}`,
-    )
+    redirect('/login')
   }
 
+  let orders: Order[] = []
   try {
-    const ordersResult = await payload.find({
+    const result = await payload.find({
       collection: 'orders',
-      limit: 5,
+      limit: 10,
       user,
       overrideAccess: false,
       pagination: false,
-      where: {
-        customer: {
-          equals: user?.id,
-        },
-      },
+      where: { customer: { equals: user.id } },
+      sort: '-createdAt',
     })
+    orders = result.docs
+  } catch {}
 
-    orders = ordersResult?.docs || []
-  } catch (error) {
-    // when deploying this template on Payload Cloud, this page needs to build before the APIs are live
-    // so swallow the error here and simply render the page with fallback data where necessary
-    // in production you may want to redirect to a 404  page or at least log the error somewhere
-    // console.error(error)
-  }
+  const displayName = user.name || user.email.split('@')[0]
 
   return (
-    <>
-      <div className="border p-8 rounded-lg bg-primary-foreground">
-        <h1 className="text-3xl font-medium mb-8">Account settings</h1>
-        <AccountForm />
-      </div>
-
-      <div className=" border p-8 rounded-lg bg-primary-foreground">
-        <h2 className="text-3xl font-medium mb-8">Recent Orders</h2>
-
-        <div className="prose dark:prose-invert mb-8">
-          <p>
-            These are the most recent orders you have placed. Each order is associated with an
-            payment. As you place more orders, they will appear in your orders list.
-          </p>
+    <div className="bg-background">
+      <header className="mx-auto max-w-7xl px-6 pb-12 pt-20">
+        <span className="eyebrow text-primary">Atelier</span>
+        <div className="mt-4 flex items-end justify-between gap-6">
+          <h1 className="font-display text-5xl italic md:text-6xl">Hello, {displayName}.</h1>
+          <LogoutButton />
         </div>
+        <p className="mt-3 text-sm text-muted-foreground">{user.email}</p>
+      </header>
 
-        {(!orders || !Array.isArray(orders) || orders?.length === 0) && (
-          <p className="mb-8">You have no orders.</p>
-        )}
-
-        {orders && orders.length > 0 && (
-          <ul className="flex flex-col gap-6 mb-8">
-            {orders?.map((order, index) => (
-              <li key={order.id}>
-                <OrderItem order={order} />
+      <section className="mx-auto max-w-7xl px-6 pb-24">
+        <span className="eyebrow text-primary">Orders</span>
+        {orders.length === 0 ? (
+          <div className="mt-6 border border-border/60 bg-secondary/30 p-10 text-center">
+            <p className="italic text-muted-foreground">
+              No orders yet — the first chapter is unwritten.
+            </p>
+            <Link
+              href="/shop"
+              className="mt-6 inline-block rounded-full bg-foreground px-6 py-3 text-sm text-background transition hover:bg-primary"
+            >
+              Discover the collection
+            </Link>
+          </div>
+        ) : (
+          <ul className="mt-6 divide-y divide-border/60 border-y border-border/60">
+            {orders.map((order) => (
+              <li key={order.id} className="flex flex-wrap items-center justify-between gap-4 py-5">
+                <div>
+                  <div className="font-display text-xl">
+                    Order #{order.id.slice(-8).toUpperCase()}
+                  </div>
+                  <div className="text-xs text-muted-foreground">
+                    {new Date(order.createdAt).toLocaleDateString(undefined, {
+                      year: 'numeric',
+                      month: 'long',
+                      day: 'numeric',
+                    })}{' '}
+                    · {(order.items ?? []).length} item
+                    {(order.items ?? []).length === 1 ? '' : 's'} ·{' '}
+                    <span className="capitalize">{order.status ?? 'pending'}</span>
+                  </div>
+                </div>
+                <div className="flex items-center gap-6">
+                  {order.amount && (
+                    <div className="font-display text-lg">${(order.amount / 100).toFixed(2)}</div>
+                  )}
+                  <Link
+                    href={`/orders/${order.id}`}
+                    className="text-sm underline-offset-4 hover:underline"
+                  >
+                    View →
+                  </Link>
+                </div>
               </li>
             ))}
           </ul>
         )}
-
-        <Button asChild variant="default">
-          <Link href="/orders">View all orders</Link>
-        </Button>
-      </div>
-    </>
+      </section>
+    </div>
   )
-}
-
-export const metadata: Metadata = {
-  description: 'Create an account or log in to your existing account.',
-  openGraph: mergeOpenGraph({
-    title: 'Account',
-    url: '/account',
-  }),
-  title: 'Account',
 }

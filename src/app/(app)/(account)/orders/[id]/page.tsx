@@ -1,19 +1,10 @@
-import type { Order } from '@/payload-types'
-import type { Metadata } from 'next'
-
-import { Price } from '@/components/Price'
-import { Button } from '@/components/ui/button'
-import { formatDateTime } from '@/utilities/formatDateTime'
-import { mergeOpenGraph } from '@/utilities/mergeOpenGraph'
-import Link from 'next/link'
-import { notFound } from 'next/navigation'
-import { ChevronLeftIcon } from 'lucide-react'
-import { ProductItem } from '@/components/ProductItem'
-import { headers as getHeaders } from 'next/headers.js'
 import configPromise from '@payload-config'
 import { getPayload } from 'payload'
-import { OrderStatus } from '@/components/OrderStatus'
-import { AddressItem } from '@/components/addresses/AddressItem'
+import { headers as getHeaders } from 'next/headers'
+import { notFound } from 'next/navigation'
+import Link from 'next/link'
+import type { Media, Order, Product, Variant } from '@/payload-types'
+import { Metadata } from 'next'
 
 export const dynamic = 'force-dynamic'
 
@@ -22,7 +13,20 @@ type PageProps = {
   searchParams: Promise<{ email?: string; accessToken?: string }>
 }
 
-export default async function Order({ params, searchParams }: PageProps) {
+export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
+  const { id } = await params
+  return { title: `Order ${id.slice(-8).toUpperCase()} — Magnetic Cosmetics` }
+}
+
+function getProductImage(product: Product): string | undefined {
+  const first = product.gallery?.[0]
+  if (!first) return undefined
+  const img = first.image
+  if (typeof img === 'object' && img !== null) return (img as Media).url ?? undefined
+  return undefined
+}
+
+export default async function OrderPage({ params, searchParams }: PageProps) {
   const headers = await getHeaders()
   const payload = await getPayload({ config: configPromise })
   const { user } = await payload.auth({ headers })
@@ -33,182 +37,137 @@ export default async function Order({ params, searchParams }: PageProps) {
   let order: Order | null = null
 
   try {
-    const {
-      docs: [orderResult],
-    } = await payload.find({
+    const { docs } = await payload.find({
       collection: 'orders',
       user,
       overrideAccess: !Boolean(user),
       depth: 2,
       where: {
         and: [
-          {
-            id: {
-              equals: id,
-            },
-          },
+          { id: { equals: id } },
           ...(user
-            ? [
-                {
-                  customer: {
-                    equals: user.id,
-                  },
-                },
-              ]
+            ? [{ customer: { equals: user.id } }]
             : [
-                {
-                  accessToken: {
-                    equals: accessToken,
-                  },
-                },
-                ...(email
-                  ? [
-                      {
-                        customerEmail: {
-                          equals: email,
-                        },
-                      },
-                    ]
-                  : []),
+                { accessToken: { equals: accessToken } },
+                ...(email ? [{ customerEmail: { equals: email } }] : []),
               ]),
         ],
       },
-      select: {
-        amount: true,
-        currency: true,
-        items: true,
-        customerEmail: true,
-        customer: true,
-        status: true,
-        createdAt: true,
-        updatedAt: true,
-        shippingAddress: true,
-      },
     })
+    order = docs[0] ?? null
+  } catch {}
 
-    const canAccessAsGuest =
-      !user &&
-      email &&
-      accessToken &&
-      orderResult &&
-      orderResult.customerEmail &&
-      orderResult.customerEmail === email
-    const canAccessAsUser =
-      user &&
-      orderResult &&
-      orderResult.customer &&
-      (typeof orderResult.customer === 'object'
-        ? orderResult.customer.id
-        : orderResult.customer) === user.id
+  if (!order) notFound()
 
-    if (orderResult && (canAccessAsGuest || canAccessAsUser)) {
-      order = orderResult
-    }
-  } catch (error) {
-    console.error(error)
-  }
-
-  if (!order) {
-    notFound()
-  }
+  const items = order.items ?? []
+  const subtotal = order.amount ?? 0
 
   return (
-    <div className="">
-      <div className="flex gap-8 justify-between items-center mb-6">
-        {user ? (
-          <div className="flex gap-4">
-            <Button asChild variant="ghost">
-              <Link href="/orders">
-                <ChevronLeftIcon />
-                All orders
-              </Link>
-            </Button>
-          </div>
-        ) : (
-          <div></div>
-        )}
-
-        <h1 className="text-sm uppercase font-mono px-2 bg-primary/10 rounded tracking-[0.07em]">
-          <span className="">{`Order #${order.id}`}</span>
+    <div className="bg-background">
+      <header className="mx-auto max-w-3xl px-6 pb-12 pt-20 text-center">
+        <span className="eyebrow text-primary">Thank you</span>
+        <h1 className="mt-6 font-display text-5xl italic md:text-6xl">
+          Your order is on its way to us.
         </h1>
-      </div>
+        {order.customerEmail && (
+          <p className="mx-auto mt-5 max-w-xl text-muted-foreground">
+            A confirmation has been sent to{' '}
+            <span className="text-foreground">{order.customerEmail}</span>. Order{' '}
+            <span className="font-display text-foreground">
+              #{order.id.slice(-8).toUpperCase()}
+            </span>
+            .
+          </p>
+        )}
+      </header>
 
-      <div className="bg-card border rounded-lg px-6 py-4 flex flex-col gap-12">
-        <div className="flex flex-col gap-6 lg:flex-row lg:justify-between">
-          <div className="">
-            <p className="font-mono uppercase text-primary/50 mb-1 text-sm">Order Date</p>
-            <p className="text-lg">
-              <time dateTime={order.createdAt}>
-                {formatDateTime({ date: order.createdAt, format: 'MMMM dd, yyyy' })}
-              </time>
-            </p>
-          </div>
+      <section className="mx-auto grid max-w-5xl gap-10 px-6 pb-24 md:grid-cols-[1fr_18rem]">
+        <div>
+          <span className="eyebrow text-primary">Items</span>
+          <ul className="mt-5 divide-y divide-border/60 border-y border-border/60">
+            {items.map((item, idx) => {
+              const product =
+                typeof item.product === 'object' && item.product !== null
+                  ? (item.product as Product)
+                  : null
+              const variant =
+                typeof item.variant === 'object' && item.variant !== null
+                  ? (item.variant as Variant)
+                  : null
+              const imageUrl = product ? getProductImage(product) : undefined
 
-          <div className="">
-            <p className="font-mono uppercase text-primary/50 mb-1 text-sm">Total</p>
-            {order.amount && <Price className="text-lg" amount={order.amount} />}
-          </div>
+              return (
+                <li key={item.id ?? idx} className="flex gap-4 py-5">
+                  <div className="h-20 w-16 shrink-0 overflow-hidden bg-gradient-to-br from-blush via-rose/40 to-lavender/30">
+                    {imageUrl && (
+                      <img
+                        src={imageUrl}
+                        alt={product?.title}
+                        className="h-full w-full object-cover"
+                      />
+                    )}
+                  </div>
+                  <div className="flex flex-1 items-start justify-between">
+                    <div>
+                      <div className="font-display text-lg">{product?.title ?? 'Product'}</div>
+                      {variant?.title && (
+                        <div className="text-xs text-muted-foreground">
+                          {variant.title} · qty {item.quantity}
+                        </div>
+                      )}
+                    </div>
+                  </div>
+                </li>
+              )
+            })}
+          </ul>
 
-          {order.status && (
-            <div className="grow max-w-1/3">
-              <p className="font-mono uppercase text-primary/50 mb-1 text-sm">Status</p>
-              <OrderStatus className="text-sm" status={order.status} />
-            </div>
+          {order.amount && (
+            <dl className="mt-6 space-y-2 text-sm">
+              <div className="flex items-center justify-between">
+                <dt className="text-muted-foreground">Total</dt>
+                <dd className="font-display text-lg">${(order.amount / 100).toFixed(2)}</dd>
+              </div>
+            </dl>
           )}
         </div>
 
-        {order.items && (
+        <aside className="space-y-6">
+          {order.shippingAddress && (
+            <div>
+              <span className="eyebrow text-primary">Shipping to</span>
+              <address className="mt-3 not-italic text-sm leading-relaxed">
+                {[order.shippingAddress.firstName, order.shippingAddress.lastName]
+                  .filter(Boolean)
+                  .join(' ')}
+                <br />
+                {order.shippingAddress.addressLine1}
+                {order.shippingAddress.addressLine2 && (
+                  <>
+                    <br />
+                    {order.shippingAddress.addressLine2}
+                  </>
+                )}
+                <br />
+                {order.shippingAddress.city}, {order.shippingAddress.state}{' '}
+                {order.shippingAddress.postalCode}
+                <br />
+                {order.shippingAddress.country}
+              </address>
+            </div>
+          )}
           <div>
-            <h2 className="font-mono text-primary/50 mb-4 uppercase text-sm">Items</h2>
-            <ul className="flex flex-col gap-6">
-              {order.items?.map((item, index) => {
-                if (typeof item.product === 'string') {
-                  return null
-                }
-
-                if (!item.product || typeof item.product !== 'object') {
-                  return <div key={index}>This item is no longer available.</div>
-                }
-
-                const variant =
-                  item.variant && typeof item.variant === 'object' ? item.variant : undefined
-
-                return (
-                  <li key={item.id}>
-                    <ProductItem
-                      product={item.product}
-                      quantity={item.quantity}
-                      variant={variant}
-                    />
-                  </li>
-                )
-              })}
-            </ul>
+            <span className="eyebrow text-primary">Status</span>
+            <p className="mt-2 capitalize">{order.status ?? 'pending'}</p>
           </div>
-        )}
-
-        {order.shippingAddress && (
-          <div>
-            <h2 className="font-mono text-primary/50 mb-4 uppercase text-sm">Shipping Address</h2>
-
-            {/* @ts-expect-error - some kind of type hell */}
-            <AddressItem address={order.shippingAddress} hideActions />
-          </div>
-        )}
-      </div>
+          <Link
+            href="/shop"
+            className="block rounded-full border border-foreground px-6 py-3 text-center text-sm transition hover:bg-foreground hover:text-background"
+          >
+            Continue shopping
+          </Link>
+        </aside>
+      </section>
     </div>
   )
-}
-
-export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
-  const { id } = await params
-
-  return {
-    description: `Order details for order ${id}.`,
-    openGraph: mergeOpenGraph({
-      title: `Order ${id}`,
-      url: `/orders/${id}`,
-    }),
-    title: `Order ${id}`,
-  }
 }

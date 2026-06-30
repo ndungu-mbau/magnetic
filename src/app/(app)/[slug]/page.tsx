@@ -25,10 +25,31 @@ export async function generateStaticParams() {
     },
   })
 
+  // Exclude slugs that have their own explicit static route so Next.js doesn't
+  // try to pre-render [slug] for URLs that will always be shadowed at runtime.
+  const STATIC_ROUTES = new Set([
+    'home',
+    'about',
+    'cart',
+    'checkout',
+    'contact',
+    'create-account',
+    'faq',
+    'find-order',
+    'forgot-password',
+    'journal',
+    'login',
+    'logout',
+    'orders',
+    'privacy',
+    'products',
+    'shipping-returns',
+    'shop',
+    'terms',
+  ])
+
   const params = pages.docs
-    ?.filter((doc) => {
-      return doc.slug !== 'home'
-    })
+    ?.filter((doc) => !STATIC_ROUTES.has(doc.slug))
     .map(({ slug }) => {
       return { slug }
     })
