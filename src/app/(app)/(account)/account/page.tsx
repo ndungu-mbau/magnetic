@@ -1,11 +1,11 @@
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import { headers as getHeaders } from 'next/headers'
-import { redirect } from 'next/navigation'
-import Link from 'next/link'
-import type { Order } from '@/payload-types'
-import { Metadata } from 'next'
 import { LogoutButton } from '@/components/shop/LogoutButton'
+import type { Order } from '@/payload-types'
+import configPromise from '@payload-config'
+import { Metadata } from 'next'
+import { headers as getHeaders } from 'next/headers'
+import Link from 'next/link'
+import { redirect } from 'next/navigation'
+import { getPayload } from 'payload'
 
 export const metadata: Metadata = {
   title: 'Your account — Magnetic Cosmetics',
@@ -66,9 +66,7 @@ export default async function AccountPage() {
             {orders.map((order) => (
               <li key={order.id} className="flex flex-wrap items-center justify-between gap-4 py-5">
                 <div>
-                  <div className="font-display text-xl">
-                    Order #{order.id.slice(-8).toUpperCase()}
-                  </div>
+                  <div className="font-display text-xl">Order #{order.id}</div>
                   <div className="text-xs text-muted-foreground">
                     {new Date(order.createdAt).toLocaleDateString(undefined, {
                       year: 'numeric',

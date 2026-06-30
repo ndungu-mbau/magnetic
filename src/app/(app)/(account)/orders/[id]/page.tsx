@@ -1,10 +1,10 @@
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import { headers as getHeaders } from 'next/headers'
-import { notFound } from 'next/navigation'
-import Link from 'next/link'
 import type { Media, Order, Product, Variant } from '@/payload-types'
+import configPromise from '@payload-config'
 import { Metadata } from 'next'
+import { headers as getHeaders } from 'next/headers'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { getPayload } from 'payload'
 
 export const dynamic = 'force-dynamic'
 
@@ -15,7 +15,7 @@ type PageProps = {
 
 export async function generateMetadata({ params }: PageProps): Promise<Metadata> {
   const { id } = await params
-  return { title: `Order ${id.slice(-8).toUpperCase()} — Magnetic Cosmetics` }
+  return { title: `Order ${id} — Magnetic Cosmetics` }
 }
 
 function getProductImage(product: Product): string | undefined {
@@ -73,10 +73,7 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
           <p className="mx-auto mt-5 max-w-xl text-muted-foreground">
             A confirmation has been sent to{' '}
             <span className="text-foreground">{order.customerEmail}</span>. Order{' '}
-            <span className="font-display text-foreground">
-              #{order.id.slice(-8).toUpperCase()}
-            </span>
-            .
+            <span className="font-display text-foreground">#{order.id}</span>.
           </p>
         )}
       </header>
