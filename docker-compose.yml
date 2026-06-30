@@ -4,8 +4,8 @@ services:
     restart: unless-stopped
     environment:
       POSTGRES_DB: magnetic_new_db
-      POSTGRES_USER: postgres
-      POSTGRES_PASSWORD: password
+      POSTGRES_USER: neondb_owner
+      POSTGRES_PASSWORD: npg_MWPhUV8JOB2t
     volumes:
       - postgres-data:/var/lib/postgresql/data
     ports:

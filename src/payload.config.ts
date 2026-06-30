@@ -39,6 +39,7 @@ export default buildConfig({
   },
   collections: [Users, Pages, Categories, Media],
   db: postgresAdapter({
+    migrationDir: path.resolve(dirname, 'migrations'),
     pool: {
       connectionString: process.env.DATABASE_URL || '',
     },
