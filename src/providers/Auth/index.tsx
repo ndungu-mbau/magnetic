@@ -3,6 +3,14 @@
 import type { User } from '@/payload-types'
 
 import React, { createContext, useCallback, useContext, useEffect, useState } from 'react'
+import {
+  createAction,
+  loginAction,
+  logoutAction,
+  meAction,
+  forgotPasswordAction,
+  resetPasswordAction,
+} from './actions'
 
 // eslint-disable-next-line no-unused-vars
 type ResetPassword = (args: {
@@ -40,99 +48,50 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
   const [status, setStatus] = useState<'loggedIn' | 'loggedOut' | undefined>()
   const create = useCallback<Create>(async (args) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/create`, {
-        body: JSON.stringify({
-          email: args.email,
-          password: args.password,
-          passwordConfirm: args.passwordConfirm,
-        }),
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-      })
-
-      if (res.ok) {
-        const { data, errors } = await res.json()
-        if (errors) throw new Error(errors[0].message)
-        setUser(data?.loginUser?.user)
+      const res = await createAction(args)
+      if (res.error) throw new Error(res.error)
+      if (res.user) {
+        setUser(res.user)
         setStatus('loggedIn')
-      } else {
-        throw new Error('Invalid login')
       }
-    } catch (e) {
-      throw new Error('An error occurred while attempting to login.')
+    } catch (e: any) {
+      throw new Error(e.message || 'An error occurred while attempting to create an account.')
     }
   }, [])
 
   const login = useCallback<Login>(async (args) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/login`, {
-        body: JSON.stringify({
-          email: args.email,
-          password: args.password,
-        }),
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-      })
-
-      if (res.ok) {
-        const { errors, user } = await res.json()
-        if (errors) throw new Error(errors[0].message)
-        setUser(user)
+      const res = await loginAction(args)
+      if (res.error) throw new Error(res.error)
+      if (res.user) {
+        setUser(res.user)
         setStatus('loggedIn')
-        return user
+        return res.user
       }
-
       throw new Error('Invalid login')
-    } catch (e) {
-      throw new Error('An error occurred while attempting to login.')
+    } catch (e: any) {
+      throw new Error(e.message || 'An error occurred while attempting to login.')
     }
   }, [])
 
   const logout = useCallback<Logout>(async () => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/logout`, {
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-      })
-
-      if (res.ok) {
-        setUser(null)
-        setStatus('loggedOut')
-      } else {
-        throw new Error('An error occurred while attempting to logout.')
-      }
-    } catch (e) {
-      throw new Error('An error occurred while attempting to logout.')
+      const res = await logoutAction()
+      if (res.error) throw new Error(res.error)
+      setUser(null)
+      setStatus('loggedOut')
+    } catch (e: any) {
+      throw new Error(e.message || 'An error occurred while attempting to logout.')
     }
   }, [])
 
   useEffect(() => {
     const fetchMe = async () => {
       try {
-        const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/me`, {
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          method: 'GET',
-        })
-
-        if (res.ok) {
-          const { user: meUser } = await res.json()
-          setUser(meUser || null)
-          setStatus(meUser ? 'loggedIn' : undefined)
-        } else {
-          throw new Error('An error occurred while fetching your account.')
-        }
+        const res = await meAction()
+        if (res.error) throw new Error(res.error)
+        setUser(res.user || null)
+        setStatus(res.user ? 'loggedIn' : undefined)
       } catch (e) {
         setUser(null)
         throw new Error('An error occurred while fetching your account.')
@@ -144,54 +103,23 @@ export const AuthProvider: React.FC<{ children: React.ReactNode }> = ({ children
 
   const forgotPassword = useCallback<ForgotPassword>(async (args) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/forgot-password`, {
-        body: JSON.stringify({
-          email: args.email,
-        }),
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-      })
-
-      if (res.ok) {
-        const { data, errors } = await res.json()
-        if (errors) throw new Error(errors[0].message)
-        setUser(data?.loginUser?.user)
-      } else {
-        throw new Error('Invalid login')
-      }
-    } catch (e) {
-      throw new Error('An error occurred while attempting to login.')
+      const res = await forgotPasswordAction(args)
+      if (res.error) throw new Error(res.error)
+    } catch (e: any) {
+      throw new Error(e.message || 'An error occurred while attempting to reset your password.')
     }
   }, [])
 
   const resetPassword = useCallback<ResetPassword>(async (args) => {
     try {
-      const res = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/reset-password`, {
-        body: JSON.stringify({
-          password: args.password,
-          passwordConfirm: args.passwordConfirm,
-          token: args.token,
-        }),
-        credentials: 'include',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-      })
-
-      if (res.ok) {
-        const { data, errors } = await res.json()
-        if (errors) throw new Error(errors[0].message)
-        setUser(data?.loginUser?.user)
-        setStatus(data?.loginUser?.user ? 'loggedIn' : undefined)
-      } else {
-        throw new Error('Invalid login')
+      const res = await resetPasswordAction(args)
+      if (res.error) throw new Error(res.error)
+      if (res.user) {
+        setUser(res.user)
+        setStatus('loggedIn')
       }
-    } catch (e) {
-      throw new Error('An error occurred while attempting to login.')
+    } catch (e: any) {
+      throw new Error(e.message || 'An error occurred while attempting to reset your password.')
     }
   }, [])
 
