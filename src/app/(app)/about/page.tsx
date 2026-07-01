@@ -1,15 +1,15 @@
 import { Metadata } from 'next'
 
 export const metadata: Metadata = {
-  title: 'Atelier — Magnetic Cosmetics',
-  description: 'Inside the Magnetic Cosmetics atelier.',
+  title: 'Shop — Magnetic Cosmetics',
+  description: 'Inside the Magnetic Cosmetics shop.',
 }
 
 export default function AboutPage() {
   return (
     <div className="bg-background">
       <div className="mx-auto max-w-3xl px-6 py-32">
-        <span className="eyebrow text-primary">The atelier</span>
+        <span className="eyebrow text-primary">The shop</span>
         <h1 className="mt-6 font-display text-5xl italic leading-tight">
           Composed slowly, only when something insists on being said.
         </h1>

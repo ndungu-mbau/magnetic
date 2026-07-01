@@ -1,10 +1,10 @@
 'use client'
 
+import { useAuth } from '@/providers/Auth'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { useAuth } from '@/providers/Auth'
 
 export default function CreateAccountPage() {
   const { create } = useAuth()
@@ -43,7 +43,7 @@ export default function CreateAccountPage() {
     <div className="bg-background">
       <section className="mx-auto max-w-md px-6 pb-32 pt-20">
         <div className="text-center">
-          <span className="eyebrow text-primary">Atelier</span>
+          <span className="eyebrow text-primary">Shop</span>
           <h1 className="mt-4 font-display text-5xl italic">Compose your story.</h1>
           <p className="mt-3 text-sm text-muted-foreground">
             Create an account to keep your favorites and orders in one place.

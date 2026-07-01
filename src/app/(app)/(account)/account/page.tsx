@@ -39,7 +39,7 @@ export default async function AccountPage() {
   return (
     <div className="bg-background">
       <header className="mx-auto max-w-7xl px-6 pb-12 pt-20">
-        <span className="eyebrow text-primary">Atelier</span>
+        <span className="eyebrow text-primary">Shop</span>
         <div className="mt-4 flex items-end justify-between gap-6">
           <h1 className="font-display text-5xl italic md:text-6xl">Hello, {displayName}.</h1>
           <LogoutButton />

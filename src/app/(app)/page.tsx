@@ -42,8 +42,8 @@ export default async function HomePage() {
               remembers.
             </h1>
             <p className="mt-6 max-w-md text-base leading-relaxed text-muted-foreground">
-              Composed in our atelier from rare florals and slow-aged resins. Each bottle is a
-              small, romantic act.
+              Composed in our shop from rare florals and slow-aged resins. Each bottle is a small,
+              romantic act.
             </p>
             <div className="mt-10 flex items-center gap-6">
               <Link

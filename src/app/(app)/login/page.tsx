@@ -1,10 +1,10 @@
 'use client'
 
+import { useAuth } from '@/providers/Auth'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { useAuth } from '@/providers/Auth'
 
 export default function LoginPage() {
   const { login } = useAuth()
@@ -33,7 +33,7 @@ export default function LoginPage() {
     <div className="bg-background">
       <section className="mx-auto max-w-md px-6 pb-32 pt-20">
         <div className="text-center">
-          <span className="eyebrow text-primary">Atelier</span>
+          <span className="eyebrow text-primary">Shop</span>
           <h1 className="mt-4 font-display text-5xl italic">Welcome back.</h1>
           <p className="mt-3 text-sm text-muted-foreground">
             Sign in to see your orders and saved preferences.
@@ -75,7 +75,7 @@ export default function LoginPage() {
         </form>
 
         <p className="mt-6 text-center text-sm text-muted-foreground">
-          New to the atelier?{' '}
+          New to the shop?{' '}
           <Link
             href="/create-account"
             className="text-foreground underline-offset-4 hover:underline"

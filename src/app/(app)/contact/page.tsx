@@ -1,7 +1,6 @@
 'use client'
 
-import { useState } from 'react'
-import { toast } from 'sonner'
+import { toast } from 'sonner';
 
 export default function ContactPage() {
   const onSubmit = (e: React.FormEvent<HTMLFormElement>) => {
@@ -16,11 +15,11 @@ export default function ContactPage() {
         <div>
           <span className="eyebrow text-primary">Letters</span>
           <h1 className="mt-6 font-display text-5xl italic leading-tight md:text-6xl">
-            Write to the atelier.
+            Write to the shop.
           </h1>
           <p className="mt-6 text-muted-foreground leading-relaxed">
-            For private commissions, press, wholesale or simply to tell us what a scent reminded
-            you of — we read every note.
+            For private commissions, press, wholesale or simply to tell us what a scent reminded you
+            of — we read every note.
           </p>
           <dl className="mt-10 space-y-5 text-sm">
             <div>
@@ -28,7 +27,7 @@ export default function ContactPage() {
               <dd className="mt-1 font-display text-lg">hello@magnetic.co</dd>
             </div>
             <div>
-              <dt className="eyebrow text-muted-foreground">Atelier</dt>
+              <dt className="eyebrow text-muted-foreground">Shop</dt>
               <dd className="mt-1">14 rue des Saints-Pères · Paris VI</dd>
             </div>
             <div>
@@ -58,7 +57,10 @@ export default function ContactPage() {
   )
 }
 
-function Field({ label, ...props }: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
+function Field({
+  label,
+  ...props
+}: { label: string } & React.InputHTMLAttributes<HTMLInputElement>) {
   return (
     <label className="block">
       <span className="eyebrow text-muted-foreground">{label}</span>

@@ -3,7 +3,7 @@ import type { ReactNode } from 'react'
 
 export const metadata: Metadata = {
   title: 'Contact',
-  description: 'Write to the Magnetic Cosmetics atelier.',
+  description: 'Write to the Magnetic Cosmetics shop.',
 }
 
 export default function ContactLayout({ children }: { children: ReactNode }) {

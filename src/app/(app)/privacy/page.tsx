@@ -13,18 +13,31 @@ export default function PrivacyPage() {
         <h1 className="mt-6 font-display text-5xl italic md:text-6xl">Privacy.</h1>
         <p className="mt-6 text-sm text-muted-foreground">Last updated May 2026.</p>
         <div className="mt-12 space-y-8 text-muted-foreground leading-relaxed">
-          <p>We collect only what we need to compose, send, and remember your order: your name, email, shipping address, and the items you&apos;ve chosen. We don&apos;t sell your information, and we never share it beyond the partners required to deliver your parcel.</p>
+          <p>
+            We collect only what we need to compose, send, and remember your order: your name,
+            email, shipping address, and the items you&apos;ve chosen. We don&apos;t sell your
+            information, and we never share it beyond the partners required to deliver your parcel.
+          </p>
           <section>
             <h2 className="font-display text-2xl text-foreground">What we store</h2>
-            <p className="mt-3">Account details, order history, and any messages you write to the atelier. You can request a copy or deletion at any time by writing to hello@magnetic.co.</p>
+            <p className="mt-3">
+              Account details, order history, and any messages you write to the shop. You can
+              request a copy or deletion at any time by writing to hello@magnetic.co.
+            </p>
           </section>
           <section>
             <h2 className="font-display text-2xl text-foreground">Cookies</h2>
-            <p className="mt-3">We use a small set of cookies to keep your cart, remember you when you sign in, and understand which pages are read. No advertising trackers, ever.</p>
+            <p className="mt-3">
+              We use a small set of cookies to keep your cart, remember you when you sign in, and
+              understand which pages are read. No advertising trackers, ever.
+            </p>
           </section>
           <section>
             <h2 className="font-display text-2xl text-foreground">Your rights</h2>
-            <p className="mt-3">You may access, correct, export, or erase your data at any time. For requests, write to hello@magnetic.co and we&apos;ll reply within 30 days.</p>
+            <p className="mt-3">
+              You may access, correct, export, or erase your data at any time. For requests, write
+              to hello@magnetic.co and we&apos;ll reply within 30 days.
+            </p>
           </section>
         </div>
       </section>
