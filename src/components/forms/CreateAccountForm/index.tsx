@@ -21,7 +21,7 @@ type FormData = {
 export const CreateAccountForm: React.FC = () => {
   const searchParams = useSearchParams()
   const allParams = searchParams.toString() ? `?${searchParams.toString()}` : ''
-  const { login } = useAuth()
+  const { create } = useAuth()
   const router = useRouter()
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState<null | string>(null)
@@ -38,20 +38,6 @@ export const CreateAccountForm: React.FC = () => {
 
   const onSubmit = useCallback(
     async (data: FormData) => {
-      const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users`, {
-        body: JSON.stringify(data),
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        method: 'POST',
-      })
-
-      if (!response.ok) {
-        const message = response.statusText || 'There was an error creating the account.'
-        setError(message)
-        return
-      }
-
       const redirect = searchParams.get('redirect')
 
       const timer = setTimeout(() => {
@@ -59,16 +45,16 @@ export const CreateAccountForm: React.FC = () => {
       }, 1000)
 
       try {
-        await login(data)
+        await create(data)
         clearTimeout(timer)
         if (redirect) router.push(redirect)
         else router.push(`/account?success=${encodeURIComponent('Account created successfully')}`)
-      } catch (_) {
+      } catch (e: any) {
         clearTimeout(timer)
-        setError('There was an error with the credentials provided. Please try again.')
+        setError(e.message || 'There was an error creating your account. Please try again.')
       }
     },
-    [login, router, searchParams],
+    [create, router, searchParams],
   )
 
   return (
