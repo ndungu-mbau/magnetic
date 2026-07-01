@@ -41,6 +41,7 @@ export const Media: CollectionConfig = {
     },
   ],
   upload: {
+    bulkUpload: true,
     staticDir: path.resolve(dirname, '../../public/media'),
   },
 }
