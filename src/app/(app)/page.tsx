@@ -1,8 +1,9 @@
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import Link from 'next/link'
 import type { Media, Product } from '@/payload-types'
+import configPromise from '@payload-config'
 import { Metadata } from 'next'
+import Image from 'next/image'
+import Link from 'next/link'
+import { getPayload } from 'payload'
 
 export const metadata: Metadata = {
   title: 'Magnetic Cosmetics — Romantic Fragrance, Hand-Blended',
@@ -35,7 +36,7 @@ export default async function HomePage() {
       <section className="relative overflow-hidden">
         <div className="mx-auto grid max-w-7xl gap-12 px-6 pb-24 pt-16 md:grid-cols-2 md:items-center md:pt-24">
           <div>
-            <span className="eyebrow text-primary">Maison Magnetic — 2026 collection</span>
+            <span className="eyebrow text-primary">Magnetic Cosmetics</span>
             <h1 className="mt-6 font-display text-5xl leading-[1.05] tracking-tight md:text-7xl">
               A fragrance is a <em className="italic text-primary">love letter</em> the skin
               remembers.
@@ -52,16 +53,20 @@ export default async function HomePage() {
                 Discover the collection
               </Link>
               <Link href="/about" className="text-sm underline-offset-4 hover:underline">
-                Our atelier →
+                About Us →
               </Link>
             </div>
           </div>
 
           <div className="relative">
             <div className="absolute -inset-6 -z-10 rounded-full bg-gradient-to-br from-rose/60 via-lavender/40 to-transparent blur-3xl" />
-            <div className="aspect-[4/5] overflow-hidden rounded-sm bg-gradient-to-br from-blush via-rose/40 to-lavender/30 flex items-center justify-center">
-              <div className="h-3/5 w-1/3 rounded-sm bg-gradient-to-b from-white/80 to-lavender/40 shadow-xl" />
-            </div>
+            <Image
+              src="/hero.jpeg"
+              alt="A lavender-tinted Magnetic Cosmetics fragrance bottle surrounded by dried roses"
+              width={1600}
+              height={1200}
+              className="rounded-sm object-cover shadow-2xl"
+            />
           </div>
         </div>
       </section>
