@@ -66,6 +66,7 @@ export default async function HomePage() {
               width={1600}
               height={1200}
               className="rounded-sm object-cover shadow-2xl"
+              loading="eager"
             />
           </div>
         </div>
