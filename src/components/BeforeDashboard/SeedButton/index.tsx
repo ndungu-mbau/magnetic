@@ -2,6 +2,7 @@
 
 import React, { Fragment, useCallback, useState, MouseEvent } from 'react'
 import { toast } from '@payloadcms/ui'
+import { seedDatabaseAction } from './actions'
 
 import './index.scss'
 
@@ -40,20 +41,15 @@ export const SeedButton: React.FC = () => {
 
       try {
         toast.promise(
-          new Promise((resolve, reject) => {
+          new Promise(async (resolve, reject) => {
             try {
-              fetch('/next/seed', { method: 'POST', credentials: 'include' })
-                .then((res) => {
-                  if (res.ok) {
-                    resolve(true)
-                    setSeeded(true)
-                  } else {
-                    reject('An error occurred while seeding.')
-                  }
-                })
-                .catch((error) => {
-                  reject(error)
-                })
+              const res = await seedDatabaseAction()
+              if (res.error) {
+                reject(new Error(res.error))
+              } else {
+                resolve(true)
+                setSeeded(true)
+              }
             } catch (error) {
               reject(error)
             }

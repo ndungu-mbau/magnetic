@@ -1,5 +1,6 @@
 'use client'
 
+import { updateAccountAction } from './actions'
 import { FormError } from '@/components/forms/FormError'
 import { FormItem } from '@/components/forms/FormItem'
 import { Message } from '@/components/Message'
@@ -40,29 +41,20 @@ export const AccountForm: React.FC = () => {
   const onSubmit = useCallback(
     async (data: FormData) => {
       if (user) {
-        const response = await fetch(`${process.env.NEXT_PUBLIC_SERVER_URL}/api/users/${user.id}`, {
-          // Make sure to include cookies with fetch
-          body: JSON.stringify(data),
-          credentials: 'include',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          method: 'PATCH',
-        })
+        const res = await updateAccountAction(data)
 
-        if (response.ok) {
-          const json = await response.json()
-          setUser(json.doc)
+        if (res.error) {
+          toast.error(res.error)
+        } else if (res.user) {
+          setUser(res.user)
           toast.success('Successfully updated account.')
           setChangePassword(false)
           reset({
-            name: json.doc.name,
-            email: json.doc.email,
+            name: res.user.name,
+            email: res.user.email,
             password: '',
             passwordConfirm: '',
           })
-        } else {
-          toast.error('There was a problem updating your account.')
         }
       }
     },

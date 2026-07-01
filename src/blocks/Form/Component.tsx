@@ -1,17 +1,17 @@
 'use client'
 import type { Form as FormType } from '@payloadcms/plugin-form-builder/types'
 
-import { useRouter } from 'next/navigation'
-import React, { useCallback, useState } from 'react'
-import { useForm, FormProvider } from 'react-hook-form'
 import { RichText } from '@/components/RichText'
 import { Button } from '@/components/ui/button'
 import type { SerializedEditorState } from '@payloadcms/richtext-lexical/lexical'
+import { useRouter } from 'next/navigation'
+import React, { useCallback, useState } from 'react'
+import { FormProvider, useForm } from 'react-hook-form'
 
+import { DefaultDocumentIDType } from 'payload'
+import { submitFormAction } from './actions'
 import { buildInitialFormState } from './buildInitialFormState'
 import { fields } from './fields'
-import { getClientSideURL } from '@/utilities/getURL'
-import { DefaultDocumentIDType } from 'payload'
 
 export type Value = unknown
 
@@ -75,27 +75,15 @@ export const FormBlock: React.FC<
         }, 1000)
 
         try {
-          const req = await fetch(`${getClientSideURL()}/api/form-submissions`, {
-            body: JSON.stringify({
-              form: formID,
-              submissionData: dataToSend,
-            }),
-            headers: {
-              'Content-Type': 'application/json',
-            },
-            method: 'POST',
-          })
-
-          const res = await req.json()
+          const res = await submitFormAction(formID!, dataToSend)
 
           clearTimeout(loadingTimerID)
 
-          if (req.status >= 400) {
+          if (res.error) {
             setIsLoading(false)
 
             setError({
-              message: res.errors?.[0]?.message || 'Internal Server Error',
-              status: res.status,
+              message: res.error || 'Internal Server Error',
             })
 
             return
