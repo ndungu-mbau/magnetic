@@ -85,6 +85,20 @@ export const plugins: Plugin[] = [
       isAdmin,
       isDocumentOwner,
     },
+    addresses: {
+      supportedCountries: [{ label: 'Kenya', value: 'KE' }],
+    },
+    currencies: {
+      defaultCurrency: 'KES',
+      supportedCurrencies: [
+        {
+          code: 'KES',
+          decimals: 2,
+          label: 'Kenya Shilling',
+          symbol: 'KSH',
+        },
+      ],
+    },
     customers: {
       slug: 'users',
     },
