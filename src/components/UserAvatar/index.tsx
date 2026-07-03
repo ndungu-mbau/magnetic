@@ -59,9 +59,6 @@ export function UserAvatar({ name, email }: Props) {
         <DropdownMenuItem asChild>
           <Link href="/account" className="cursor-pointer">Account</Link>
         </DropdownMenuItem>
-        <DropdownMenuItem asChild>
-          <Link href="/orders" className="cursor-pointer">Orders</Link>
-        </DropdownMenuItem>
 
         <DropdownMenuSeparator />
 
