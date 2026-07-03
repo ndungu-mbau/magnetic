@@ -35,6 +35,17 @@ export const Providers: React.FC<{
             <SonnerProvider />
             <EcommerceProvider
               enableVariants={true}
+              currenciesConfig={{
+                defaultCurrency: 'KES',
+                supportedCurrencies: [
+                  {
+                    code: 'KES',
+                    decimals: 2,
+                    label: 'Kenya Shilling',
+                    symbol: 'KSH',
+                  },
+                ],
+              }}
               api={{
                 cartsFetchQuery: {
                   depth: 2,
