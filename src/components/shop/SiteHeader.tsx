@@ -9,7 +9,7 @@ import { UserAvatar } from '@/components/UserAvatar'
 
 const centerNav = [
   { href: '/shop', label: 'Shop' },
-  { href: '/shop', label: 'Collections' },
+  { href: '/collections', label: 'Collections' },
   { href: '/about', label: 'About' },
   { href: '/contact', label: 'Contact' },
   { href: '/faq', label: 'FAQ' },
