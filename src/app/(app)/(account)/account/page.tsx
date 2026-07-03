@@ -1,4 +1,5 @@
 import { LogoutButton } from '@/components/shop/LogoutButton'
+import { Price } from '@/components/Price'
 import type { Order } from '@/payload-types'
 import configPromise from '@payload-config'
 import { Metadata } from 'next'
@@ -79,8 +80,13 @@ export default async function AccountPage() {
                   </div>
                 </div>
                 <div className="flex items-center gap-6">
-                  {order.amount && (
-                    <div className="font-display text-lg">${(order.amount / 100).toFixed(2)}</div>
+                  {order.amount != null && (
+                    <Price
+                      as="span"
+                      className="font-display text-lg"
+                      amount={order.amount}
+                      currencyCode={order.currency ?? 'KES'}
+                    />
                   )}
                   <Link
                     href={`/orders/${order.id}`}

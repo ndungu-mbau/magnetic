@@ -1,14 +1,18 @@
 'use client'
 
 import Link from 'next/link'
-import { ShoppingBag, User } from 'lucide-react'
+import { ShoppingBag, LayoutDashboard } from 'lucide-react'
 import { useEcommerce } from '@payloadcms/plugin-ecommerce/client/react'
 import { useAuth } from '@/providers/Auth'
 import { usePathname } from 'next/navigation'
+import { UserAvatar } from '@/components/UserAvatar'
 
-const nav = [
+const centerNav = [
   { href: '/shop', label: 'Shop' },
+  { href: '/shop', label: 'Collections' },
   { href: '/about', label: 'About' },
+  { href: '/contact', label: 'Contact' },
+  { href: '/faq', label: 'FAQ' },
 ] as const
 
 export function SiteHeader() {
@@ -21,36 +25,38 @@ export function SiteHeader() {
     0,
   )
 
+  const isAdmin = user?.roles?.includes('admin') ?? false
+
   return (
     <header className="sticky top-0 z-40 border-b border-border/60 bg-background/80 backdrop-blur-md">
-      <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
-        <div className="flex-1" />
+      <div className="mx-auto flex h-16 max-w-7xl items-center px-6">
 
-        <Link href="/" className="flex flex-col items-center leading-none">
-          <span className="font-display text-2xl tracking-tight">Magnetic</span>
-          <span className="eyebrow mt-0.5 text-muted-foreground">Cosmetics</span>
-        </Link>
+        {/* Left — site name */}
+        <div className="flex-1">
+          <Link href="/" className="flex flex-col leading-none w-fit">
+            <span className="font-display text-2xl tracking-tight">Magnetic</span>
+            <span className="eyebrow mt-0.5 text-muted-foreground">Cosmetics</span>
+          </Link>
+        </div>
 
-        <nav className="flex flex-1 items-center justify-end gap-6 text-sm">
-          {nav.map((n) => (
+        {/* Center — page links */}
+        <nav className="hidden md:flex items-center gap-6 text-sm">
+          {centerNav.map((n) => (
             <Link
-              key={n.href}
+              key={n.label}
               href={n.href}
               className={
-                'hidden text-foreground/70 transition hover:text-foreground md:inline ' +
+                'text-foreground/70 transition hover:text-foreground ' +
                 (pathname === n.href ? 'text-foreground' : '')
               }
             >
               {n.label}
             </Link>
           ))}
-          <Link
-            href={user ? '/account' : '/login'}
-            aria-label="Account"
-            className="text-foreground/70 transition hover:text-foreground"
-          >
-            <User className="h-4 w-4" />
-          </Link>
+        </nav>
+
+        {/* Right — cart, admin, account */}
+        <div className="flex flex-1 items-center justify-end gap-5">
           <Link
             href="/cart"
             aria-label="Cart"
@@ -63,7 +69,29 @@ export function SiteHeader() {
               </span>
             )}
           </Link>
-        </nav>
+
+          {(!user || isAdmin) && (
+            <Link
+              href="/admin"
+              aria-label="Admin dashboard"
+              className="text-foreground/70 transition hover:text-foreground"
+            >
+              <LayoutDashboard className="h-4 w-4" />
+            </Link>
+          )}
+
+          {user ? (
+            <UserAvatar name={user.name} email={user.email} />
+          ) : (
+            <Link
+              href="/login"
+              className="text-sm text-foreground/70 transition hover:text-foreground"
+            >
+              Login
+            </Link>
+          )}
+        </div>
+
       </div>
     </header>
   )

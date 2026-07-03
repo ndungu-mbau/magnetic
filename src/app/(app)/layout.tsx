@@ -1,7 +1,6 @@
 import type { ReactNode } from 'react'
 import type { Metadata } from 'next'
 
-import { AdminBar } from '@/components/AdminBar'
 import { LivePreviewListener } from '@/components/LivePreviewListener'
 import { Providers } from '@/providers'
 import { InitTheme } from '@/providers/Theme/InitTheme'
@@ -29,7 +28,6 @@ export default async function RootLayout({ children }: { children: ReactNode }) 
       </head>
       <body>
         <Providers>
-          <AdminBar />
           <LivePreviewListener />
           <SiteHeader />
           <main className="min-h-screen">{children}</main>

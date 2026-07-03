@@ -1,4 +1,5 @@
 import type { Media, Order, Product, Variant } from '@/payload-types'
+import { Price } from '@/components/Price'
 import configPromise from '@payload-config'
 import { Metadata } from 'next'
 import { headers as getHeaders } from 'next/headers'
@@ -119,11 +120,18 @@ export default async function OrderPage({ params, searchParams }: PageProps) {
             })}
           </ul>
 
-          {order.amount && (
+          {order.amount != null && (
             <dl className="mt-6 space-y-2 text-sm">
               <div className="flex items-center justify-between">
                 <dt className="text-muted-foreground">Total</dt>
-                <dd className="font-display text-lg">${(order.amount / 100).toFixed(2)}</dd>
+                <dd>
+                  <Price
+                    as="span"
+                    className="font-display text-lg"
+                    amount={order.amount}
+                    currencyCode={order.currency ?? 'KES'}
+                  />
+                </dd>
               </div>
             </dl>
           )}
