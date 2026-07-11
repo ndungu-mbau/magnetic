@@ -20,8 +20,8 @@ export function SiteFooter() {
               </Link>
             </li>
             <li>
-              <Link href="/shop" className="hover:text-primary">
-                Discovery sets
+              <Link href="/collections" className="hover:text-primary">
+                Collections
               </Link>
             </li>
           </ul>
