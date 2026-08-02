@@ -1,15 +1,15 @@
 'use client'
 
+import type { Product, Variant } from '@/payload-types'
+import { useEcommerce } from '@payloadcms/plugin-ecommerce/client/react'
 import { useState } from 'react'
 import { toast } from 'sonner'
-import { useEcommerce } from '@payloadcms/plugin-ecommerce/client/react'
-import type { Product, Variant } from '@/payload-types'
 
 export function AddToCartButton({ product, variants }: { product: Product; variants: Variant[] }) {
   const { addItem, isLoading } = useEcommerce()
   const [selectedVariant, setSelectedVariant] = useState<Variant | null>(variants[0] ?? null)
 
-  const price = selectedVariant?.priceInUSD ?? product.priceInUSD ?? 0
+  const price = selectedVariant?.priceInKES ?? product.priceInKES ?? 0
 
   const onAdd = async () => {
     try {

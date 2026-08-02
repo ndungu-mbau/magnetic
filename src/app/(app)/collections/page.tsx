@@ -1,9 +1,9 @@
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import Link from 'next/link'
 import type { Category, Media, Product } from '@/payload-types'
-import type { Metadata } from 'next'
 import { cn } from '@/utilities/cn'
+import configPromise from '@payload-config'
+import type { Metadata } from 'next'
+import Link from 'next/link'
+import { getPayload } from 'payload'
 
 export const metadata: Metadata = {
   title: 'Collections — Magnetic Cosmetics',
@@ -48,7 +48,7 @@ export default async function CollectionsPage({ searchParams }: { searchParams: 
               : []),
         ],
       },
-      select: { title: true, slug: true, gallery: true, priceInUSD: true },
+      select: { title: true, slug: true, gallery: true, priceInKES: true },
       sort: 'title',
     }),
   ])
@@ -91,7 +91,11 @@ export default async function CollectionsPage({ searchParams }: { searchParams: 
                   cat === category.slug,
                 ),
               )}
-              {sidebarLink('/collections?cat=uncategorized', 'Uncategorized', cat === 'uncategorized')}
+              {sidebarLink(
+                '/collections?cat=uncategorized',
+                'Uncategorized',
+                cat === 'uncategorized',
+              )}
             </nav>
           </aside>
 
@@ -133,9 +137,9 @@ export default async function CollectionsPage({ searchParams }: { searchParams: 
                         </div>
                         <div className="mt-5">
                           <h3 className="font-display text-2xl">{product.title}</h3>
-                          {product.priceInUSD != null && (
+                          {product.priceInKES != null && (
                             <p className="mt-1 text-sm italic text-muted-foreground">
-                              KSH {product.priceInUSD.toFixed(2)}
+                              KSH {product.priceInKES.toFixed(2)}
                             </p>
                           )}
                         </div>

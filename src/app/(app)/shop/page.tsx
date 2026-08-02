@@ -1,9 +1,9 @@
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import Link from 'next/link'
-import type { Category, Media, Product } from '@/payload-types'
-import { Metadata } from 'next'
 import { ShopFilters } from '@/components/shop/ShopFilters'
+import type { Category, Media, Product } from '@/payload-types'
+import configPromise from '@payload-config'
+import { Metadata } from 'next'
+import Link from 'next/link'
+import { getPayload } from 'payload'
 
 export const metadata: Metadata = {
   title: 'Shop — Magnetic Cosmetics',
@@ -37,7 +37,7 @@ export default async function ShopPage({ searchParams }: { searchParams: SearchP
           ...(categoryFilter ? [{ 'categories.slug': { equals: categoryFilter } }] : []),
         ],
       },
-      select: { title: true, slug: true, gallery: true, priceInUSD: true, categories: true },
+      select: { title: true, slug: true, gallery: true, priceInKES: true, categories: true },
       sort: 'title',
     }),
     payload.find({
@@ -102,9 +102,9 @@ export default async function ShopPage({ searchParams }: { searchParams: SearchP
                       </div>
                       <div className="mt-5">
                         <h3 className="font-display text-2xl">{product.title}</h3>
-                        {product.priceInUSD && (
+                        {product.priceInKES && (
                           <p className="mt-1 text-sm italic text-muted-foreground">
-                            ${product.priceInUSD.toFixed(2)}
+                            ${product.priceInKES.toFixed(2)}
                           </p>
                         )}
                       </div>

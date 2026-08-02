@@ -1,14 +1,14 @@
 'use client'
 
+import { cashAdapterClient } from '@/payments/cash/client'
 import { AuthProvider } from '@/providers/Auth'
 import { EcommerceProvider } from '@payloadcms/plugin-ecommerce/client/react'
-import { cashAdapterClient } from '@/payments/cash/client'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import React, { useState } from 'react'
 
+import { SonnerProvider } from '@/providers/Sonner'
 import { HeaderThemeProvider } from './HeaderTheme'
 import { ThemeProvider } from './Theme'
-import { SonnerProvider } from '@/providers/Sonner'
 
 export const Providers: React.FC<{
   children: React.ReactNode
@@ -55,12 +55,12 @@ export const Providers: React.FC<{
                       title: true,
                       gallery: true,
                       inventory: true,
-                      priceInUSD: true,
+                      priceInKES: true,
                     },
                     variants: {
                       title: true,
                       inventory: true,
-                      priceInUSD: true,
+                      priceInKES: true,
                     },
                   },
                 },

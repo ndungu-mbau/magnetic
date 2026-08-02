@@ -27,7 +27,7 @@ export default async function HomePage() {
     overrideAccess: false,
     limit: 3,
     where: { _status: { equals: 'published' } },
-    select: { title: true, slug: true, gallery: true, priceInUSD: true },
+    select: { title: true, slug: true, gallery: true, priceInKES: true },
   })
 
   return (
@@ -112,9 +112,9 @@ export default async function HomePage() {
                   </div>
                   <div className="mt-5">
                     <h3 className="font-display text-2xl">{product.title}</h3>
-                    {product.priceInUSD && (
+                    {product.priceInKES && (
                       <p className="mt-1 text-sm text-muted-foreground">
-                        ${product.priceInUSD.toFixed(2)}
+                        ${product.priceInKES.toFixed(2)}
                       </p>
                     )}
                   </div>

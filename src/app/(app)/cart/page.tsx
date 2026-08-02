@@ -1,9 +1,9 @@
 'use client'
 
-import Link from 'next/link'
-import { Minus, Plus, X } from 'lucide-react'
-import { useEcommerce } from '@payloadcms/plugin-ecommerce/client/react'
 import type { Media, Product, Variant } from '@/payload-types'
+import { useEcommerce } from '@payloadcms/plugin-ecommerce/client/react'
+import { Minus, Plus, X } from 'lucide-react'
+import Link from 'next/link'
 
 function getProductImage(product: Product): string | undefined {
   const first = product.gallery?.[0]
@@ -23,10 +23,10 @@ export default function CartPage() {
   const subtotal = items.reduce((sum, item) => {
     const price =
       (typeof item.variant === 'object' && item.variant !== null
-        ? (item.variant as Variant).priceInUSD
+        ? (item.variant as Variant).priceInKES
         : null) ??
       (typeof item.product === 'object' && item.product !== null
-        ? (item.product as Product).priceInUSD
+        ? (item.product as Product).priceInKES
         : null) ??
       0
     return sum + (price ?? 0) * item.quantity
@@ -65,7 +65,7 @@ export default function CartPage() {
               const imageUrl = product ? getProductImage(product) : undefined
               const displayName = product?.title ?? 'Product'
               const variantLabel = variant?.title ?? ''
-              const price: number = (variant?.priceInUSD ?? product?.priceInUSD ?? 0) as number
+              const price: number = (variant?.priceInKES ?? product?.priceInKES ?? 0) as number
 
               return (
                 <li key={item.id} className="flex gap-5 py-6">

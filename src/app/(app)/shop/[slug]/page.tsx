@@ -1,11 +1,11 @@
-import configPromise from '@payload-config'
-import { getPayload } from 'payload'
-import { notFound } from 'next/navigation'
-import Link from 'next/link'
-import type { Media, Product, Variant } from '@/payload-types'
-import { Metadata } from 'next'
 import { AddToCartButton } from '@/components/shop/AddToCartButton'
+import type { Media, Product, Variant } from '@/payload-types'
+import configPromise from '@payload-config'
+import { Metadata } from 'next'
 import { draftMode } from 'next/headers'
+import Link from 'next/link'
+import { notFound } from 'next/navigation'
+import { getPayload } from 'payload'
 
 type Args = { params: Promise<{ slug: string }> }
 
@@ -25,9 +25,7 @@ export async function generateMetadata({ params }: Args): Promise<Metadata> {
   return {
     title: product.title,
     description: product.meta?.description ?? '',
-    openGraph: imageUrl
-      ? { images: [{ url: imageUrl, alt: product.title }] }
-      : undefined,
+    openGraph: imageUrl ? { images: [{ url: imageUrl, alt: product.title }] } : undefined,
   }
 }
 
@@ -74,10 +72,10 @@ export default async function ShopProductPage({ params }: Args) {
         <div className="md:sticky md:top-24">
           <h1 className="mt-4 font-display text-5xl md:text-6xl">{product.title}</h1>
 
-          {product.priceInUSD && (
+          {product.priceInKES && (
             <div className="mt-8">
               <div className="eyebrow text-muted-foreground">Price</div>
-              <div className="mt-1 font-display text-3xl">${product.priceInUSD.toFixed(2)}</div>
+              <div className="mt-1 font-display text-3xl">KES{product.priceInKES.toFixed(2)}</div>
             </div>
           )}
 
@@ -144,13 +142,10 @@ async function queryProduct(slug: string): Promise<Product | null> {
     overrideAccess: draft,
     pagination: false,
     where: {
-      and: [
-        { slug: { equals: slug } },
-        ...(draft ? [] : [{ _status: { equals: 'published' } }]),
-      ],
+      and: [{ slug: { equals: slug } }, ...(draft ? [] : [{ _status: { equals: 'published' } }])],
     },
     populate: {
-      variants: { title: true, priceInUSD: true, inventory: true, options: true },
+      variants: { title: true, priceInKES: true, inventory: true, options: true },
     },
   })
   return result.docs?.[0] ?? null

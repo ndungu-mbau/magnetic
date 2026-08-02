@@ -1,17 +1,17 @@
 'use client'
 
-import { useAuth } from '@/providers/Auth'
-import { useAddresses, useEcommerce, usePayments } from '@payloadcms/plugin-ecommerce/client/react'
-import { CheckoutAddresses } from '@/components/checkout/CheckoutAddresses'
-import { CreateAddressModal } from '@/components/addresses/CreateAddressModal'
 import { AddressItem } from '@/components/addresses/AddressItem'
+import { CreateAddressModal } from '@/components/addresses/CreateAddressModal'
+import { CheckoutAddresses } from '@/components/checkout/CheckoutAddresses'
 import { Checkbox } from '@/components/ui/checkbox'
 import { Label } from '@/components/ui/label'
-import { toast } from 'sonner'
+import type { Address, Media, Product, Variant } from '@/payload-types'
+import { useAuth } from '@/providers/Auth'
+import { useAddresses, useEcommerce, usePayments } from '@payloadcms/plugin-ecommerce/client/react'
 import Link from 'next/link'
 import { useRouter } from 'next/navigation'
 import React, { useCallback, useEffect, useState } from 'react'
-import type { Address, Media, Product, Variant } from '@/payload-types'
+import { toast } from 'sonner'
 
 type CashInitiateResult = { transactionID: string; message: string }
 type CashConfirmResult = {
@@ -297,7 +297,7 @@ export const CheckoutPage: React.FC = () => {
             const variant =
               typeof item.variant === 'object' && item.variant ? (item.variant as Variant) : null
             const imageUrl = product ? getProductImage(product) : undefined
-            const price = variant?.priceInUSD ?? product?.priceInUSD ?? 0
+            const price = variant?.priceInKES ?? product?.priceInKES ?? 0
 
             return (
               <li key={item.id ?? idx} className="flex gap-3 text-sm">

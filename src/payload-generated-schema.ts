@@ -7,22 +7,22 @@
  */
 
 import type {} from '@payloadcms/db-postgres'
+import { relations } from '@payloadcms/db-postgres/drizzle'
 import {
-  pgTable,
-  index,
-  uniqueIndex,
-  foreignKey,
-  integer,
-  serial,
-  varchar,
-  timestamp,
-  numeric,
   boolean,
-  text,
+  foreignKey,
+  index,
+  integer,
   jsonb,
+  numeric,
   pgEnum,
+  pgTable,
+  serial,
+  text,
+  timestamp,
+  uniqueIndex,
+  varchar,
 } from '@payloadcms/db-postgres/drizzle/pg-core'
-import { sql, relations } from '@payloadcms/db-postgres/drizzle'
 export const enum_users_roles = pgEnum('enum_users_roles', ['admin', 'customer'])
 export const enum_pages_hero_links_link_type = pgEnum('enum_pages_hero_links_link_type', [
   'reference',
